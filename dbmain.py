@@ -1,23 +1,35 @@
-#   Main File for Database startup
-#   Contains code for database shell
-#
-#   Author: Rahul Bhartari
-#
+'''
+Created on Oct 4, 2015
 
-# Function to get input from the console
-# Returns a command string
-def py_get_input():
-  cmd = input("$>")
-  if cmd[len(cmd)-1]!=';':
-    cmd+=' '+py_get_input()
-  return cmd
+@author: rahul.bhartari
+'''
+import sys
+from PySqlLib.constdata import *
+from PySqlLib.parser import *
 
-# function which will process the command string (not list)
-def process_cmd(cmd):
-  cmdstk = []         # empty list to store commands in a stack
-  
+if __name__ == '__main__':
+    pass
 
+##DBMS initialization and infinite input loop
 
+class dbmain(pySQL):
+    def __init__(self):
+        self.console = pyParser()
 
+    def process_cmdstk(self,stk):
+        return self.cmd_codes.EXIT
 
-# SELECT * FROM F3,F1 WHERE F1.name==F3.name
+    def start(self):
+        # main code starts here
+        print("    ________________ PySQL V-1.0 ________________")
+        while True:
+            tcmd=self.console.get_input()
+            cstk=self.console.create_stack(tcmd)
+            if self.process_cmdstk(cstk)==self.cmd_codes.EXIT:
+                break
+        print("Exiting ^_^")
+    
+# start the command parser in continuous while loop
+session = dbmain()
+session.start()
+
