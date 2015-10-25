@@ -1,0 +1,17 @@
+'''
+Created on Oct 25, 2015
+
+@author: rahul.bhartari
+'''
+from PySqlLib.resources import pyResources
+
+class pyIO(pyResources):
+    '''
+    IO module for file io of different classes
+    supported types of io are:
+    > sign-in io
+    > database io
+    > setting file io
+    '''
+    def __init__(self, params):
+        pass
