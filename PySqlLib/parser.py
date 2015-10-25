@@ -12,9 +12,9 @@ class pyCMD:
         self.__info = info
         #every information related to the particular command is to be added
 
-class pyParser(pySQL):
+class pyParser(pyResources):
     def __init__(self):
-        super().__init__(self.cmd_codes.CONSOLE_INPUT,[],None)
+        super().__init__()
 
     #Get input from console
     #Create a command string which MUST end with ';' character
@@ -54,11 +54,6 @@ class pyParser(pySQL):
             return self.__get_cinput()
         return None
 
-    def get_command(self,cstr):
-        try:
-            return pySQL.cmd_set.index(cstr)
-        except:
-            return self.cmd_codes.ERR_NOT_FOUND
 
     def create_stack(self,cmdstr):
         spchar = "<>,./(\\)[]{}-+=!~|%^&*@#$:;"
@@ -119,8 +114,11 @@ class pyParser(pySQL):
                     print("Try Again!!")
             #end-if
         #end-for
+        #push in main stack so that first command is on the top of the stack
+        self.cstack.clear()
         while tmpstk.is_empty()==False:
             self.cstack.push(tmpstk.pop())
-        #self.cstack.display()
+        #end-while
+        return self.cstack
 
 
