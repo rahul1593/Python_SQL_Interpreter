@@ -4,7 +4,25 @@ Created on Oct 17, 2015
 @author: rahul.bhartari
 '''
 import sys
+import os
 from PySqlLib.constdata import *
+from io import *
+
+class pyTable:
+    def __init__(self,name,column_dict,):
+        '''
+        {column_name:[type_code,constraint_name,constraint_code,condition_string]}
+        '''
+        self.name = name
+        self.column_dict = column_dict
+        
+
+class pyDB:
+    def __init__(self,name,file):
+        self.name=name
+        self.file=file
+        self.tlist=[]
+        #to be completed
 
 class pySQL:
     '''
@@ -29,15 +47,15 @@ class pySQL:
           "NULL","DEBUG",\
           "AND","OR","NOT","BETWEEN","EQUALS","GREATER","SMALLER","NOTEQUAL","ADD","SUB","DIV","MUL","MOD",\
           "AVG","CNT","SUM","XOR","VER",\
-          "REFERENCES","CHECK","CONSTRAINT")
+          "REFERENCES","CHECK","CONSTRAINT","DROP","ALTER","TRUNCATE","GRANT","REVOKE","COMMIT","ROLLBACK")
     cmd_codes = cmdCodes()
     #constructor: initialize private instance variables
     def __init__(self, io_source,db_list,user):
         self.__io_source = io_source    #select input source: file(script) or console mode
-        self.__db_list = db_list        #list of available databases(objects) for current user
+        self.__db_list = db_list        #dictionary of available databases(objects) for current user
         self.__current_user = user      #current user
         self.__debug_mode = 0           #debug mode
-        self.__input_file=None          #input script file handle
+        self.__input_file=None       #input script file object
         self.cstack = cStack(200,None)  #command stack
 
     def get_io_source(self):
@@ -81,7 +99,7 @@ class pySQL:
                     return False
         elif len(cmdargs)==3:
             try:
-                self.__input_file = open(cmdargs[1],'r')
+                self.__input_file = os.open(cmdargs[1], 'r')
                 self.__debug_mode=int(cmdargs[2])
                 self.__io_source = self.cmd_codes.FILE_INPUT
             except:
@@ -94,15 +112,39 @@ class pySQL:
         return True
 
 
-class pyResources:
+class pyResources(pySQL):
+    
     def __init__(self):
-        #specific initialization
-        pass
+        super().__init__(self.cmd_codes.CONSOLE_INPUT,None,None)
 
-    def search(self,file):
-        pass
+    def get_command(self,cstr):
+        try:
+            return self.cmd_set.index(cstr)
+        except:
+            return self.cmd_codes.ERR_NOT_FOUND
 
-    def get_cmd(self,cstring):
+    def search(self,file,string):
+        tmp=""
+        c_off=file.tell()
+        file.seek(0,SEEK_END)
+        f_sz=file.tell()
+        file.seek(c_off,SEEK_SET)
+        while True:
+            ch=file.read(1)
+            #print('ch:'+ch)
+            if ch == string[0]:
+                if file.tell()+len(string)-1>f_sz:
+                    print("Not found")
+                    break
+                tmp=ch+file.read(len(string)-1)
+                if tmp==string:
+                    c_off=file.tell()-len(string)
+                    return c_off
+                file.seek(file.tell()-len(string)+1,SEEK_SET)
+        file.seek(c_off,SEEK_SET)
+        return -1
+
+    def get_tables(self,database_file):
         pass
 
  
@@ -192,6 +234,9 @@ class cStack(pyResources):
     def get_top(self):
         return self.__top
 
+    def clear(self):
+        while self.is_empty()==False:
+            self.pop()
 
 '''
 Linked List class:
