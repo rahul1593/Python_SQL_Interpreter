@@ -82,13 +82,29 @@ class cmdCodes:
     REFERENCES  = 73
     CHECK   = 74
     CONSTRAINT  = 75
+    DROP    = 76
+    ALTER   = 77
+    TRUNCATE= 78
+    GRANT   = 79
+    REVOKE  = 80
+    COMMIT  = 81
+    ROLLBACK= 82
     
-
+    code_max= 82
+    
+    DDL = [CREATE,ALTER,DROP,TRUNCATE]
+    DML = [INSERT,UPDATE,DELETE,SELECT]
+    DCL = [GRANT,REVOKE]
+    TCL = [COMMIT,ROLLBACK]
     #Error Codes
     ERR_STACK_FULL  = -1
     ERR_STACK_EMPTY = -2
     ERR_STACK_SIZE  = -3
     ERR_NOT_FOUND   = -4
+    ERR_UNAUTHORIZED= -5
+    ERR_UNKNOWN_COMMAND = -6
+    ERR_UNKNOWN_APPLICATION =   -7
+    ERR_LOGIN_FAILURE   = -8
 
     #Other Codes
     FILE_INPUT    = 0
@@ -111,6 +127,10 @@ class EX_UNKNOWN_COMMAND(Exception):
 class EX_NOT_FOUND(Exception):
     def __init__(self):
         pass
+class EX_INTERNAL_FILE(Exception):
+    def __init__(self):
+        print("Session Manager: Error !! Unable to open program files !!")
+
 
 #Dummy Exception Class
 class EX_DUMMY(Exception):
